@@ -49,10 +49,10 @@ def home():
 
 
 # InfluxDB設定
-url = 'http://10.8.49.203:8086' # InfluxDB URL
-token = "qE1J_1s3kLvjZJpjBKz9FtZSZ_zKqxZMOW6JEdTeDUvo8_nLUxGr7mQutPjtDAIONg68o35Dbe_5sQ2krnoUQg==" # 修改為你的InfluxDB token
-org = "cs230" # InfluxDB組織名稱
-bucket = "server" # InfluxDB bucket名稱
+url = 'http://localhost:8086' # InfluxDB URL localhost基本上會自己定義，可以直接設定成自己的ip
+token = "your_influxDB_token" # 修改為你的InfluxDB token
+org = "your_org_name" # InfluxDB組織名稱
+bucket = "your_bucket_name" # InfluxDB bucket名稱
 
 # 創建InfluxDB客戶端
 client = InfluxDBClient(url=url, token=token, org=org)
@@ -93,4 +93,4 @@ def get_progress():
     return jsonify(progress)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0',port=5001)
+    app.run(debug=True, host='0.0.0.0',port=5001) #port 可以自己設定 host='0.0.0.0'是為了可以從外部訪問
