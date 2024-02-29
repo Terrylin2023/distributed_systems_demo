@@ -54,9 +54,9 @@ def home():
 
 # InfluxDB設定
 url = 'http://localhost:8086' # InfluxDB URL
-token = "qE1J_1s3kLvjZJpjBKz9FtZSZ_zKqxZMOW6JEdTeDUvo8_nLUxGr7mQutPjtDAIONg68o35Dbe_5sQ2krnoUQg==" # 修改為你的InfluxDB token
-org = "cs230" # InfluxDB組織名稱
-bucket = "server" # InfluxDB bucket名稱
+token = "your_token" # 修改為你的InfluxDB token
+org = "your_org_name" # InfluxDB組織名稱
+bucket = "yore_bucket_name" # InfluxDB bucket名稱
 
 # 創建InfluxDB客戶端
 client = InfluxDBClient(url=url, token=token, org=org)
