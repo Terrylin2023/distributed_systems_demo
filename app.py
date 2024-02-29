@@ -1,4 +1,4 @@
-import influxdb_client, os, time, threading
+import influxdb_client, os, time, threading, random
 from flask import Flask, jsonify
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -25,6 +25,8 @@ def home():
                     .then(data => {
                         document.getElementById('status').innerText = `Status: ${data.status}`;
                         document.getElementById('cpu_usage').innerText = `CPU Usage: ${data.cpu_usage}%`;
+                        document.getElementById('memory_usage').innerText = `Memory Usage: ${data.memory_usage}%`;
+                        document.getElementById('throughput').innerText = `Throughput: ${data.throughput} kbps`;
                         document.getElementById('health').innerText = `Health: ${data.health}`;
                         document.getElementById('message').innerText = data.message;
                     })
@@ -41,6 +43,8 @@ def home():
         <button onclick="startDataCollection()">Start Data Collection</button>
         <p id="status">Status: idle</p>
         <p id="cpu_usage">CPU Usage: 0%</p>
+        <p id="memory_usage">Memory Usage: 0%</p>
+        <p id="throughput">Throughput: 0 kbps</p>
         <p id="health">Health: unknown</p>
         <p id="message">Click start to collect data.</p>
     </body>
@@ -49,10 +53,10 @@ def home():
 
 
 # InfluxDB設定
-url = 'http://localhost:8086' # InfluxDB URL localhost基本上會自己定義，可以直接設定成自己的ip
-token = "your_influxDB_token" # 修改為你的InfluxDB token
-org = "your_org_name" # InfluxDB組織名稱
-bucket = "your_bucket_name" # InfluxDB bucket名稱
+url = 'http://localhost:8086' # InfluxDB URL
+token = "qE1J_1s3kLvjZJpjBKz9FtZSZ_zKqxZMOW6JEdTeDUvo8_nLUxGr7mQutPjtDAIONg68o35Dbe_5sQ2krnoUQg==" # 修改為你的InfluxDB token
+org = "cs230" # InfluxDB組織名稱
+bucket = "server" # InfluxDB bucket名稱
 
 # 創建InfluxDB客戶端
 client = InfluxDBClient(url=url, token=token, org=org)
@@ -61,21 +65,23 @@ client = InfluxDBClient(url=url, token=token, org=org)
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
 # 全局變量用於儲存進度
-progress = {"status": "idle", "cpu_usage": 0, "health": "unknown", "message": ""}
+progress = {"status": "idle", "cpu_usage": 0, "memory_usage": 0,"throughput": 0,"health": "unknown", "message": ""}
 
 
 
 
 def collect_and_send_data():
     global progress
-    # 定時收集和發送數據
+    # 定時收集和發送數據s
     for i in range(10):
         cpu_usage = i * 9
+        memory_usage= i * random.randint(1, 10)
+        throughput = i * random.randint(10, 100)
         health = "healthy" if cpu_usage < 80 else "unhealthy"
-        point = Point("system").tag("host", "server01").field("cpu_usage", cpu_usage).field("health", health) # 創建數據點
+        point = Point("system").tag("host", "server01").field("cpu_usage", cpu_usage).field("memory_usage", memory_usage).field("throughput", throughput).field("health", health) # 創建數據點
         write_api.write(bucket=bucket, org=org, record=point) # 寫入InfluxDB
-        print(f"Sent CPU usage: {cpu_usage}%",f"Health: {health}")
-        progress = {"status": "collecting", "cpu_usage": cpu_usage, "health": health, "message": f"Sent CPU usage: {cpu_usage}%, Health: {health}"}
+        print(f"Sent CPU usage: {cpu_usage}% ,memory_usage: {memory_usage}%,throughput: {throughput} kbps,Health: {health}")
+        progress = {"status": "collecting", "cpu_usage": cpu_usage, "memory_usage": memory_usage,"throughput": throughput,"health": health, "message": f"Sent CPU usage: {cpu_usage}%, Memory usage: {memory_usage}%, Throughput: {throughput}kbps,Health: {health}"}
         time.sleep(1)  # 每1秒運行一次
     progress["status"] = "complete"
     progress["message"] = "Data collection and sending complete!"
@@ -83,7 +89,7 @@ def collect_and_send_data():
 @app.route('/start_collect')
 def start_collect():
     global progress
-    progress = {"status": "starting", "cpu_usage": 0, "health": "unknown", "message": "Starting data collection..."}
+    progress = {"status": "starting", "cpu_usage": 0, "memory_usage": 0,"throughput": 0,"health": "unknown", "message": "Starting data collection..."}
     thread = threading.Thread(target=collect_and_send_data)
     thread.start()
     return jsonify({"message": "Data collection started."})
@@ -92,5 +98,14 @@ def start_collect():
 def get_progress():
     return jsonify(progress)
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    # loadbalencer check health status
+    if progress['health'] == 'healthy':
+        return jsonify({'status': 'healthy'}),200
+    else:
+        return jsonify({'status': 'unhealthy'}),503
+    
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0',port=5001) #port 可以自己設定 host='0.0.0.0'是為了可以從外部訪問
+    app.run(debug=True, host='0.0.0.0',port=5001)
