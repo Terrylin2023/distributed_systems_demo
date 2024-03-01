@@ -18,6 +18,15 @@
 結合使用 auto_offset_reset 和 group_id，您可以精細控製消費者的行爲，確保消息的有效處理，同時利用 Kafka 提供的負載均衡和容錯功能。
 
 
+* 創建kafka topic
+  ```
+  kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3 --topic server1
+  ```
+
+* 驗證是否成功加入
+```
+kafka-topics --list --bootstrap-server localhost:9092
+```
 
 
 
