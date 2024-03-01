@@ -3,7 +3,7 @@
 ## 1. Kafka
 
 ```
-docker-compose -f '/Users/terrylin/Desktop/2024 Winter/Distributed System/Project/server/docker-compose.yaml' up
+docker-compose -f '/Users/terrylin/Desktop/2024Winter/DistributedSystem/Project/server/docker-compose.yaml' up
 ```
 
 
