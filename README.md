@@ -17,3 +17,15 @@ indluxd
 ```
 telegraf --config /Users/terrylin/Desktop/2024Winter/DistributedSystem/Project/server/telegraf.conf
 ```
+
+## 4. Docker
+先打開Docker Desktop，才能順利運行
+
+build
+```
+docker build -t server_v2 .
+```
+run
+```
+docker run --name server1 server_v2
+```
