@@ -15,5 +15,5 @@ indluxd
 
 ## 3. Telegraf
 ```
-telegraf --config /Users/terrylin/Desktop/2024 Winter/Distributed System/Project/server/telegraf.conf
+telegraf --config /Users/terrylin/Desktop/2024Winter/DistributedSystem/Project/server/telegraf.conf
 ```
