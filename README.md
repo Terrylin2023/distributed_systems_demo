@@ -2,19 +2,18 @@
 
 ## 1. Kafka
 
-We want to use kafka,then we should start the zookeeper first
-
 ```
-brew services start zookeeper
+docker-compose -f '/Users/terrylin/Desktop/2024 Winter/Distributed System/Project/server/docker-compose.yaml' up
 ```
 
-After that, we start the kafka
-```
-brew services start kafka
-```
 
 ## 2. Influxdb
 start Influxdb
 ```
 indluxd
+```
+
+## 3. Telegraf
+```
+telegraf --config /Users/terrylin/Desktop/2024 Winter/Distributed System/Project/server/telegraf.conf
 ```
